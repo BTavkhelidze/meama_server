@@ -10,6 +10,9 @@ export class User {
   email: string;
   @Prop({ type: Number })
   number: number;
+
+  @Prop({ type: Boolean })
+  active: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
