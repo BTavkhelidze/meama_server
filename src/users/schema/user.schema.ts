@@ -8,8 +8,8 @@ export class User {
   lastName: string;
   @Prop({ type: String })
   email: string;
-  @Prop({ type: String })
-  number: string;
+  @Prop({ type: Number })
+  number: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
