@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
@@ -9,7 +10,7 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class authOTPToken implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -18,14 +19,14 @@ export class AuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException();
+      throw new BadRequestException("OTP is Invalid");
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
       });
 
-      request["user"] = payload;
+      request["userOTP"] = payload;
     } catch {
       throw new UnauthorizedException();
     }

@@ -2,11 +2,11 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { SignInDto } from "./dto/SignIn.dto";
-// import * as speakeasy from "speakeasy";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { isValidObjectId, Model } from "mongoose";
 import { User } from "src/users/schema/user.schema";
 
 import { SignUpDto } from "./dto/sign-up.dto";
@@ -26,7 +26,7 @@ export class AuthService {
     return await this.userModel.create({ ...signUpdto, active: true });
   }
 
-  async signIn(signInDto: SignInDto) {
+  async signInOTP(signInDto: SignInDto) {
     const user = await this.userModel.findOne({ number: signInDto.number });
     if (!user) throw new BadRequestException("user not found");
     // const payload = { sub: user._id, username: user.email };
@@ -38,10 +38,27 @@ export class AuthService {
 
     // return token;
     // return { access_token: await this.jwtService.sign(payload) };
+
     return this.otpService.getOTP(user);
   }
 
-  getUser(user) {
-    return user;
+  verifyOTP(token) {
+    return this.otpService.verifyOTP(token);
+  }
+
+  signIn() {
+    return "yes";
+  }
+
+  async getUser(user) {
+    if (!isValidObjectId(user))
+      throw new BadRequestException("Invalid id Format");
+    const activeUser = await this.userModel.findById(user);
+    if (!activeUser)
+      throw new UnauthorizedException(
+        "Sorry,Somthing went wrong. User not found ",
+      );
+
+    return activeUser;
   }
 }
