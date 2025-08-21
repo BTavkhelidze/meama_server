@@ -42,8 +42,8 @@ export class AuthService {
     return this.otpService.getOTP(user);
   }
 
-  verifyOTP(token) {
-    return this.otpService.verifyOTP(token);
+  verifyOTP(token, res) {
+    return this.otpService.verifyOTP(token, res);
   }
 
   signIn() {
@@ -51,9 +51,8 @@ export class AuthService {
   }
 
   async getUser(user) {
-    if (!isValidObjectId(user))
-      throw new BadRequestException("Invalid id Format");
-    const activeUser = await this.userModel.findById(user);
+    const activeUser = await this.userModel.find({ number: user });
+    console.log(user);
     if (!activeUser)
       throw new UnauthorizedException(
         "Sorry,Somthing went wrong. User not found ",
