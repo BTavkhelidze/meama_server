@@ -27,8 +27,8 @@ export class AuthService {
   }
 
   async signInOTP(signInDto: SignInDto) {
-    const user = await this.userModel.findOne({ number: signInDto.number });
-    if (!user) throw new BadRequestException("user not found");
+    // const user = await this.userModel.findOne({ number: signInDto.number });
+
     // const payload = { sub: user._id, username: user.email };
     // const secret = speakeasy.generateSecret({ length: 20 });
     // const token = speakeasy.totp({
@@ -39,11 +39,15 @@ export class AuthService {
     // return token;
     // return { access_token: await this.jwtService.sign(payload) };
 
-    return this.otpService.getOTP(user);
+    return this.otpService.getOTP({ number: signInDto.number });
   }
 
-  verifyOTP(token, res) {
-    return this.otpService.verifyOTP(token, res);
+  async verifyOTP(verifyOtpDto) {
+    console.log(verifyOtpDto, "res");
+    const user = await this.userModel.findOne({ number: verifyOtpDto.number });
+    if (!user) throw new UnauthorizedException("Please Register User");
+
+    return this.otpService.verifyOTP(verifyOtpDto);
   }
 
   signIn() {
@@ -51,8 +55,8 @@ export class AuthService {
   }
 
   async getUser(user) {
+    console.log(user, "user");
     const activeUser = await this.userModel.find({ number: user });
-    console.log(user);
     if (!activeUser)
       throw new UnauthorizedException(
         "Sorry,Somthing went wrong. User not found ",

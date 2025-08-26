@@ -12,7 +12,7 @@ import { SignInDto } from "./dto/SignIn.dto";
 import { SignUpDto } from "./dto/sign-up.dto";
 import { AuthGuard } from "./guard/auth.guard";
 import { authOTPToken } from "./guard/authOTPToken.guard";
-import { Response } from "express";
+import { VerifyOtpDto } from "./dto/verifyOtpDto.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -30,8 +30,8 @@ export class AuthController {
   }
 
   @Post("Verify-otp")
-  verifyOtp(@Body() token: number, @Res() res) {
-    return this.authService.verifyOTP(token, res);
+  verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    return this.authService.verifyOTP(verifyOtpDto);
   }
 
   @UseGuards(authOTPToken)
@@ -41,8 +41,8 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Get("profileByNum")
+  @Get("currentUser")
   getUser(@Request() req) {
-    return this.authService.getUser(req.userNumber.sub);
+    return this.authService.getUser(req.user.sub);
   }
 }
