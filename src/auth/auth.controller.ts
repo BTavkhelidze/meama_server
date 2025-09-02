@@ -13,6 +13,7 @@ import { SignUpDto } from "./dto/sign-up.dto";
 import { AuthGuard } from "./guard/auth.guard";
 import { authOTPToken } from "./guard/authOTPToken.guard";
 import { VerifyOtpDto } from "./dto/verifyOtpDto.dto";
+import { SignUpWithNumberDto } from "./dto/SignUpWithNumber.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -23,6 +24,11 @@ export class AuthController {
     return this.authService.signUp(signUpdto);
   }
 
+  @Post("sign-up-mob")
+  SignUpWithPhone(@Body() signUpWithNumberDto: SignUpWithNumberDto) {
+    return this.authService.SignUpWithPhone(signUpWithNumberDto);
+  }
+
   @Post("sign-in-OTP")
   signInOTP(@Body() signInDto: SignInDto) {
     // return "ths";
@@ -31,6 +37,7 @@ export class AuthController {
 
   @Post("Verify-otp")
   verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    console.log(verifyOtpDto);
     return this.authService.verifyOTP(verifyOtpDto);
   }
 
@@ -43,6 +50,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get("currentUser")
   getUser(@Request() req) {
+    console.log(req);
     return this.authService.getUser(req.user.sub);
   }
 }

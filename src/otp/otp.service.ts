@@ -37,7 +37,7 @@ export class OtpService {
     const access_token = await this.jwtService.signAsync(payload, {
       expiresIn: "1h",
     });
-    console.log(access_token);
+
     return { access_token };
   }
   // @UseGuards(authOTPToken)

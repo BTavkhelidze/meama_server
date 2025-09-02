@@ -11,6 +11,7 @@ import { User } from "src/users/schema/user.schema";
 
 import { SignUpDto } from "./dto/sign-up.dto";
 import { OtpService } from "src/otp/otp.service";
+import { SignUpWithNumberDto } from "./dto/SignUpWithNumber.dto";
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,30 @@ export class AuthService {
     const user = await this.userModel.findOne({ number: signUpdto.number });
     if (user) throw new NotFoundException("user alrady exists");
     return await this.userModel.create({ ...signUpdto, active: true });
+  }
+
+  async SignUpWithPhone(signUpWithNumberDto: SignUpWithNumberDto) {
+    const user = await this.userModel.findOne({
+      number: +signUpWithNumberDto.number,
+    });
+    console.log(user);
+    if (user) throw new NotFoundException("user alrady exists");
+    const newUser = {
+      firstName: signUpWithNumberDto.firstName,
+      lastName: signUpWithNumberDto.lastName,
+      email: `${signUpWithNumberDto.number}@otp.costumer.me`,
+      number: +signUpWithNumberDto.number,
+    };
+    const otp = await this.otpService.getOTP({
+      number: +signUpWithNumberDto.number,
+    });
+
+    const token = await this.otpService.verifyOTP(otp);
+    if (!token)
+      throw new BadRequestException("Sign Up With Number Somthing went wrong");
+    await this.userModel.create(newUser);
+
+    return { ...token, status: 200, message: "created successfully" };
   }
 
   async signInOTP(signInDto: SignInDto) {
@@ -43,7 +68,6 @@ export class AuthService {
   }
 
   async verifyOTP(verifyOtpDto) {
-    console.log(verifyOtpDto, "res");
     const user = await this.userModel.findOne({ number: verifyOtpDto.number });
     if (!user) throw new UnauthorizedException("Please Register User");
 
