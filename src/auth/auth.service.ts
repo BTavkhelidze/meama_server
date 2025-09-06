@@ -52,18 +52,6 @@ export class AuthService {
   }
 
   async signInOTP(signInDto: SignInDto) {
-    // const user = await this.userModel.findOne({ number: signInDto.number });
-
-    // const payload = { sub: user._id, username: user.email };
-    // const secret = speakeasy.generateSecret({ length: 20 });
-    // const token = speakeasy.totp({
-    //   secret: secret.base32,
-    //   encoding: "base32",
-    // });
-
-    // return token;
-    // return { access_token: await this.jwtService.sign(payload) };
-
     return this.otpService.getOTP({ number: signInDto.number });
   }
 
